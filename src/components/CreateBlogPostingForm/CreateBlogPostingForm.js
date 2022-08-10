@@ -1,15 +1,14 @@
-import React, { useCallback, useState, useEffect } from 'react';
+import React, { useCallback, useState} from 'react';
 import ClayForm, { ClayInput } from '@clayui/form';
-import { postBlogEntry } from '../../services/BlogService'
+import { postBlogEntry } from '../../services/BlogService';
+import ClayButton from '@clayui/button';
 
 
-function BlogPostingForm({setHasNewPost, setParentSiteId}) {
+function CreateBlogPostingForm({setPostsHasUpdated, setParentSiteId}) {
+    
     const [articleBody, setArticleBody] = useState('');
     const [headline, setHeadline] = useState('');
     const [siteId, setSiteId] = useState('');
-
-    console.log(setHasNewPost)
-    console.log(setParentSiteId)
 
     const onButtonSubmit = useCallback(() => {
         postBlogEntry(siteId,
@@ -23,7 +22,7 @@ function BlogPostingForm({setHasNewPost, setParentSiteId}) {
                 setHeadline(''),
                 setSiteId(''),
                 setParentSiteId(siteId),
-                setHasNewPost(true)
+                setPostsHasUpdated(true)
         })
     },
         [
@@ -88,8 +87,8 @@ function BlogPostingForm({setHasNewPost, setParentSiteId}) {
                     </div>
                 </div>
 
-                <button className="btn btn-primary" onClick={() => onButtonSubmit()}>Add post</button>
+                <ClayButton displayType="primary" onClick={() => onButtonSubmit()}>{"Add post"}</ClayButton>
             </div>
         </>
     )
-} export default BlogPostingForm;
+} export default CreateBlogPostingForm;

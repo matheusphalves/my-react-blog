@@ -8,9 +8,19 @@ export function fetchAllBlogEntries(siteId) {
 export function postBlogEntry(siteId, payloadContent){
 
     let headers = getHeaders('test@liferay.com', 'test')
-    const request = createPostRequest(payloadContent, headers)
+    const request = createPostRequest(payloadContent, headers, 'POST')
     return Liferay.Util.fetch(
         `/o/headless-delivery/v1.0/sites/${siteId}/blog-postings`,
+        request
+    ).then(res => res.json());
+}
+
+export function updateBlogEntry(blogPostId, payloadContent){
+
+    let headers = getHeaders('test@liferay.com', 'test')
+    const request = createPostRequest(payloadContent, headers, 'PUT')
+    return Liferay.Util.fetch(
+        `/o/headless-delivery/v1.0/blog-postings/${blogPostId}`,
         request
     ).then(res => res.json());
 }
@@ -25,13 +35,12 @@ export function getSingleBlogEntryById(blogPostingId) {
 }
 
 
-
 export function deleteSingleBlogEntryById(blogPostingId) {
 
     return Liferay.Util.fetch(
         `/o/headless-delivery/v1.0/blog-postings/${blogPostingId}`,
         { method: 'DELETE', headers: getHeaders('test@liferay.com', 'test') }
-    ).then(resp => resp.json());
+    ).then(() => {});
 }
 
 export function getHeaders(user, password){
@@ -42,12 +51,12 @@ export function getHeaders(user, password){
     return headers;
 }
 
-function createPostRequest(data, headers){
+function createPostRequest(data, headers, method){
 
     const request = {
 		body: JSON.stringify(data),
 		headers,
-		method: 'POST'
+		method: method
 	};
 
     return request;

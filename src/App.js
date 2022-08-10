@@ -1,33 +1,60 @@
 import React, { useEffect, useState } from "react";
-import BlogPostingForm from "./components/BlogPostingForm/BlogPostingForm";
+import CreateBlogPostingForm from "./components/CreateBlogPostingForm/CreateBlogPostingForm";
+import UpdateBlogPostingForm from "./components/UpdateBlogPostingForm/UpdateBlogPostingForm";
 import BlogPostingList from "./components/BlogPostingList/BlogPostingList";
-import { fetchAllBlogEntries } from './services/BlogService'
+import { fetchAllBlogEntries } from './services/BlogService';
+import ClayButton from '@clayui/button';
 
 
 function App(){
 
-    const [posts, setPosts] = useState([]);
-    
-    const [hasNewPost, setHasNewPost] = useState(false);
     const [parentSiteId, setParentSiteId] = useState('');
+    const [posts, setPosts] = useState([]);
+    const [postsHasUpdated, setPostsHasUpdated] = useState(false);
+    const [postToUpdate, setPostToUpdate] = useState(null);
 
     useEffect(() => {
-        if(hasNewPost == true){
+        if(postsHasUpdated == true){
             fetchAllBlogEntries(parentSiteId).then(res => {
                 setPosts(res.items);
+                setPostsHasUpdated(false);
+            }).catch((error) => {
+                console.log(error);
             })
-            setHasNewPost(false);
         }
-    }, [hasNewPost]);
+    }, [postsHasUpdated]);
 
-    return(
+    return (
         <>
             <h1>Blog App!</h1>
-            <BlogPostingForm 
-                setHasNewPost = {setHasNewPost} 
-                setParentSiteId = {setParentSiteId}
-            />
-            <BlogPostingList posts={posts}/>
+            
+            <div>
+                {postToUpdate != null ?
+                    (
+                        <>
+                        <ClayButton displayType="primary" onClick={() => setPostToUpdate(null)}>{"Cancel"}</ClayButton>
+                            <UpdateBlogPostingForm
+                                data={postToUpdate}
+                                setPostsHasUpdated={setPostsHasUpdated}
+                            />
+                        </>
+                    ) :
+                    (
+                        <CreateBlogPostingForm
+                            setPostsHasUpdated={setPostsHasUpdated}
+                            setParentSiteId={setParentSiteId}
+                        />
+                    )
+                }
+            </div>
+
+            <div className="row">
+                <BlogPostingList
+                    posts={posts}
+                    setPostToUpdate={setPostToUpdate}
+                    setPostsHasUpdated={setPostsHasUpdated}
+                />
+            </div>
         </>
     )
 
