@@ -1,59 +1,64 @@
-import React, { useEffect, useState } from "react";
-import CreateBlogPostingForm from "./components/CreateBlogPostingForm/CreateBlogPostingForm";
-import UpdateBlogPostingForm from "./components/UpdateBlogPostingForm/UpdateBlogPostingForm";
+import React, { useState } from "react";
+import BlogPostingForm from "./components/BlogPostingForm/BlogPostingForm";
 import BlogPostingList from "./components/BlogPostingList/BlogPostingList";
-import { fetchAllBlogEntries } from './services/BlogService';
-import ClayButton from '@clayui/button';
+import { getSingleBlogEntryById } from './services/BlogService';
 
 
 function App(){
 
-    const [parentSiteId, setParentSiteId] = useState('');
     const [posts, setPosts] = useState([]);
-    const [postsHasUpdated, setPostsHasUpdated] = useState(false);
     const [postToUpdate, setPostToUpdate] = useState(null);
 
-    useEffect(() => {
-        if(postsHasUpdated == true){
-            fetchAllBlogEntries(parentSiteId).then(res => {
-                setPosts(res.items);
-                setPostsHasUpdated(false);
-            }).catch((error) => {
-                console.log(error);
-            })
-        }
-    }, [postsHasUpdated]);
+    const getUpdatedPostById = (postId) => {
+        getSingleBlogEntryById(postId).then(postUpdated => {
+            const filteredPosts = filterPostsWichNotContainsId(postId)
+            console.log('filtrado: ', filteredPosts)
+            console.log('new: ', postUpdated)
+            setPosts([...filteredPosts, postUpdated]);
+        }).catch((error) => {
+            console.log(error);
+        })
+    }
+
+    const removePostById = (postId) => {
+        const filteredPosts = filterPostsWichNotContainsId(postId)
+        setPosts(filteredPosts);
+    }
+
+    const filterPostsWichNotContainsId = (postId) => {
+        return posts.filter((post) => {
+            if(post.id != postId){
+                return post;
+            }
+        })
+    }
+
 
     return (
         <>
             <h1>Blog App!</h1>
-            
-            <div>
-                {postToUpdate != null ?
-                    (
-                        <>
-                        <ClayButton displayType="primary" onClick={() => setPostToUpdate(null)}>{"Cancel"}</ClayButton>
-                            <UpdateBlogPostingForm
-                                data={postToUpdate}
-                                setPostsHasUpdated={setPostsHasUpdated}
-                            />
-                        </>
-                    ) :
-                    (
-                        <CreateBlogPostingForm
-                            setPostsHasUpdated={setPostsHasUpdated}
-                            setParentSiteId={setParentSiteId}
-                        />
-                    )
-                }
-            </div>
-
             <div className="row">
-                <BlogPostingList
-                    posts={posts}
-                    setPostToUpdate={setPostToUpdate}
-                    setPostsHasUpdated={setPostsHasUpdated}
-                />
+                <div className="col-5">
+                    <div>
+                        <BlogPostingForm
+                            onSavePost={(savedPost) => setPosts([...posts, savedPost])}
+                            onUpdatePost={(postId) => {
+                                getUpdatedPostById(postId)
+                            }}
+                            postToUpdate={postToUpdate}
+                        />
+                    </div>
+                </div>
+
+                <div className="col">
+                    <div className="row">
+                        <BlogPostingList
+                            posts={posts}
+                            setPostToUpdate={setPostToUpdate}
+                            onDeletePost={(postId) => removePostById(postId)}
+                        />
+                    </div>
+                </div>
             </div>
         </>
     )
