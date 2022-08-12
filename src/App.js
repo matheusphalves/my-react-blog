@@ -1,13 +1,20 @@
 import React, { useState } from "react";
 import BlogPostingForm from "./components/BlogPostingForm/BlogPostingForm";
 import BlogPostingList from "./components/BlogPostingList/BlogPostingList";
-import { getSingleBlogEntryById } from './services/BlogService';
+import { fetchAllBlogEntries, getSingleBlogEntryById } from './services/BlogService';
 
 
 function App(){
 
     const [posts, setPosts] = useState([]);
     const [postToUpdate, setPostToUpdate] = useState(null);
+    //create state for site id?
+
+    useState(() => {
+        fetchAllBlogEntries('20121').then((postsResponse) => {
+            setPosts(postsResponse.items)
+        }) 
+    })
 
     const getUpdatedPostById = (postId) => {
         getSingleBlogEntryById(postId).then(postUpdated => {
