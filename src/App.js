@@ -12,8 +12,6 @@ function App(){
     const getUpdatedPostById = (postId) => {
         getSingleBlogEntryById(postId).then(postUpdated => {
             const filteredPosts = filterPostsWichNotContainsId(postId)
-            console.log('filtrado: ', filteredPosts)
-            console.log('new: ', postUpdated)
             setPosts([...filteredPosts, postUpdated]);
         }).catch((error) => {
             console.log(error);
