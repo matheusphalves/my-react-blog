@@ -1,16 +1,18 @@
-export function fetchAllBlogEntries(siteId) {
+const siteKey = Liferay.ThemeDisplay.getSiteGroupId();
+
+export function fetchAllBlogEntries() {
     return Liferay.Util.fetch(
-        `/o/headless-delivery/v1.0/sites/${siteId}/blog-postings`,
+        `/o/headless-delivery/v1.0/sites/${siteKey}/blog-postings`,
         { method: 'GET', headers: getHeaders('test@liferay.com', 'test') }
     ).then(resp => resp.json());
 }
 
-export function postBlogEntry(siteId, payloadContent){
+export function postBlogEntry(payloadContent){
 
     let headers = getHeaders('test@liferay.com', 'test')
     const request = createPostRequest(payloadContent, headers, 'POST')
     return Liferay.Util.fetch(
-        `/o/headless-delivery/v1.0/sites/${siteId}/blog-postings`,
+        `/o/headless-delivery/v1.0/sites/${siteKey}/blog-postings`,
         request
     ).then(res => res.json());
 }

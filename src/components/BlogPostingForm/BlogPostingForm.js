@@ -19,8 +19,7 @@ function BlogPostingForm({ onSavePost, onUpdatePost, postToUpdate }) {
 
     
     const onSaveButtonSubmit = useCallback(() => {
-        postBlogEntry('20121',
-            {
+        postBlogEntry({
                 articleBody: articleBody,
                 headline: headline
             }

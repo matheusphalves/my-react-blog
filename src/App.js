@@ -11,7 +11,7 @@ function App(){
     //create state for site id?
 
     useState(() => {
-        fetchAllBlogEntries('20121').then((postsResponse) => {
+        fetchAllBlogEntries().then((postsResponse) => {
             setPosts(postsResponse.items)
         }) 
     })
